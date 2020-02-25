@@ -159,16 +159,23 @@ public class Histogram extends SimpleCollector<Histogram.Child> implements Colle
   public static class Timer implements Closeable {
     private final Child child;
     private final long start;
+    private final TimeFormatEnum timeFormat;
     private Timer(Child child, long start) {
       this.child = child;
       this.start = start;
+      this.timeFormat=TimeFormatEnum.SECOND_TIME_FORMAT;
+    }
+    private Timer(Child child, long start,TimeFormatEnum timeFormat) {
+      this.child = child;
+      this.start = start;
+      this.timeFormat=timeFormat;
     }
     /**
      * Observe the amount of time in seconds since {@link Child#startTimer} was called.
      * @return Measured duration in seconds since {@link Child#startTimer} was called.
      */
     public double observeDuration() {
-        double elapsed = SimpleTimer.elapsedSecondsFromNanos(start, SimpleTimer.defaultTimeProvider.nanoTime());
+        double elapsed = timeFormat.format(SimpleTimer.defaultTimeProvider.nanoTime()-start);
         child.observe(elapsed);
         return elapsed;
     }
@@ -270,6 +277,15 @@ public class Histogram extends SimpleCollector<Histogram.Child> implements Colle
      */
     public Timer startTimer() {
       return new Timer(this, SimpleTimer.defaultTimeProvider.nanoTime());
+    }
+    /**
+     * Start a timer to track a duration.
+     * <p>
+     * Call {@link Timer#observeDuration} at the end of what you want to measure the duration of.
+     * @param timeFormat see {@link TimeFormatEnum}
+     */
+    public Timer startTimer(TimeFormatEnum timeFormat) {
+      return new Timer(this, SimpleTimer.defaultTimeProvider.nanoTime(),timeFormat);
     }
     /**
      * Get the value of the Histogram.

@@ -166,6 +166,10 @@ public abstract class Collector {
    */
   public static final double NANOSECONDS_PER_SECOND = 1E9;
   /**
+   * Number of nanoseconds in a millisecond.
+   */
+  public static final double NANOSECONDS_PER_MILLISECOND = 1E6;
+  /**
    * Number of milliseconds in a second.
    */
   public static final double MILLISECONDS_PER_SECOND = 1E3;

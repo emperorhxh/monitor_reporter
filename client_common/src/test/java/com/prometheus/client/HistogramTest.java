@@ -136,6 +136,20 @@ public class HistogramTest {
   }
 
   @Test
+  public void labelsTimeFormat() {
+    SimpleTimer.defaultTimeProvider = new SimpleTimer.TimeProvider() {
+      long value = (long)(30 * 1e9);
+      long nanoTime() {
+        value += (long)(10 * 1e9);
+        return value;
+      }
+    };
+    Histogram.Timer timer = labels.labels("a").startTimer(TimeFormatEnum.MILLIISECOND_TIME_FORMAT);
+    double elapsedMilliSecond = timer.observeDuration();
+    assertEquals(10000, elapsedMilliSecond, .001);
+  }
+
+  @Test
   public void noLabelsDefaultZeroValue() {
     assertEquals(0.0, getCount(), .001);
     assertEquals(0.0, getSum(), .001);
